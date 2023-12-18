@@ -28,6 +28,7 @@ import React, {useEffect, useState} from 'react'
 import Plotly from 'plotly.js-dist'
 // Import MQTT service
 import { MQTTService } from "./mqttService.js";
+import { server } from "./utilities/utilities.js";
 
 function App() {
   var weather = 0,temperature = 0,humidity = 0,rain = 0,soil_moisture = 0;
@@ -37,7 +38,7 @@ function App() {
   const [initializeMqttState,setInitializeMqttState] = useState(false)
 
   useEffect(()=>{
-    fetch('/dashboard/pub_sub').then(
+    fetch(`${server}/dashboard/pub_sub`).then(
       response => response.json()
     ).then(
       data => {setBakendData(data)}
@@ -604,7 +605,7 @@ function App() {
       mqttStatus = document.querySelector(".status");
     }
     // ***********
-    fetch("/dashboard/fetch_current_weather")
+    fetch(`${server}/dashboard/fetch_current_weather`)
     .then(
       response => response.json(),
     // console.log(response)
@@ -631,7 +632,7 @@ function App() {
   }
 
   function fetchMQTTConnection() {
-    fetch("/mqttConnDetails", {
+    fetch(`${server}/mqttConnDetails`, {
       method: "GET",
       headers: {
         "Content-type": "application/json; charset=UTF-8",
