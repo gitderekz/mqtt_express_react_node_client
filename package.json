@@ -1,7 +1,7 @@
 {
   "name": "client",
   "version": "0.1.0",
-  "proxy": "http://localhost:5000",
+  "proxy": "https://mqtt-express-react-node-server.onrender.coms",
   "private": true,
   "homepage": "http://gitderekz.github.io/aqual",
   "private": true,
