@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/mqtt_express_react_node_client/static/css/main.bc213bb2.css",
-    "main.js": "/mqtt_express_react_node_client/static/js/main.7746237b.js",
+    "main.js": "/mqtt_express_react_node_client/static/js/main.e58a9a5e.js",
     "static/js/787.d5fa4d18.chunk.js": "/mqtt_express_react_node_client/static/js/787.d5fa4d18.chunk.js",
     "index.html": "/mqtt_express_react_node_client/index.html",
     "main.bc213bb2.css.map": "/mqtt_express_react_node_client/static/css/main.bc213bb2.css.map",
-    "main.7746237b.js.map": "/mqtt_express_react_node_client/static/js/main.7746237b.js.map",
+    "main.e58a9a5e.js.map": "/mqtt_express_react_node_client/static/js/main.e58a9a5e.js.map",
     "787.d5fa4d18.chunk.js.map": "/mqtt_express_react_node_client/static/js/787.d5fa4d18.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.bc213bb2.css",
-    "static/js/main.7746237b.js"
+    "static/js/main.e58a9a5e.js"
   ]
 }
