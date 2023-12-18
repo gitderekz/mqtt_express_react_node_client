@@ -1,13 +1,14 @@
 {
   "name": "client",
   "version": "0.1.0",
-  "proxy": "https://mqtt-express-react-node-server.onrender.coms",
+  "proxy": "http://localhost:5000",
   "private": true,
   "homepage": "https://gitderekz.github.io/mqtt_express_react_node_client",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.6.2",
     "gh-pages": "^6.1.0",
     "mqtt": "^5.3.3",
     "plotly.js-dist": "^2.27.1",

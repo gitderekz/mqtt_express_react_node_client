@@ -1,1 +1,1 @@
-server = 'https://mqtt-express-react-node-server.onrender.coms'
+export const server = 'https://mqtt-express-react-node-server.onrender.com';

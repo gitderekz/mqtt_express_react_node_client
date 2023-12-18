@@ -24,6 +24,7 @@ import './App.css';
 
 // export default App;
 
+import axios from 'axios';
 import React, {useEffect, useState} from 'react'
 import Plotly from 'plotly.js-dist'
 // Import MQTT service
@@ -38,8 +39,9 @@ function App() {
   const [initializeMqttState,setInitializeMqttState] = useState(false)
 
   useEffect(()=>{
-    fetch(`${server}/dashboard/pub_sub`).then(
-      response => response.json()
+    // fetch(`${server}/dashboard/pub_sub`).then(
+    axios.get(`${server}/dashboard/pub_sub`).then(
+      response => response.data
     ).then(
       data => {setBakendData(data)}
     )
@@ -240,26 +242,6 @@ function App() {
   var config = { responsive: true, displayModeBar: false };
   const mediaQuery = window.matchMedia("(max-width: 600px)");
 
-  // Event listener when page is loaded
-  function initial_loading() {
-    // window.addEventListener("load", (event) => {
-      Plotly.newPlot(temperatureHistoryDiv,[temperatureTrace],temperatureLayout,config);
-      Plotly.newPlot(humidityHistoryDiv, [humidityTrace], humidityLayout, config);
-      Plotly.newPlot(pressureHistoryDiv, [pressureTrace], pressureLayout, config);
-      Plotly.newPlot(altitudeHistoryDiv, [altitudeTrace], altitudeLayout, config);
-     
-
-      // // Run it initially
-      handleDeviceChange(mediaQuery);
-    // });
-    
-    
-    // Get MQTT Connection
-      fetchMQTTConnection();
-  }
-
-
-
   mediaQuery.addEventListener("change", function (e) {
     handleDeviceChange(e);
   });
@@ -381,15 +363,6 @@ function App() {
   ];
 
   var layout = { width: 300, height: 250, margin: { t: 0, b: 0, l: 0, r: 0 } };
-  try {
-    Plotly.newPlot(temperatureGaugeDiv, temperatureData, layout);
-    Plotly.newPlot(humidityGaugeDiv, humidityData, layout);
-    Plotly.newPlot(pressureGaugeDiv, pressureData, layout);
-    Plotly.newPlot(altitudeGaugeDiv, altitudeData, layout);  
-  } catch (error) {
-    
-  }
-
 
   // Will hold the arrays we receive from our BME280 sensor
   // Temperature
@@ -408,18 +381,44 @@ function App() {
   // The maximum number of data points displayed on our scatter/line graph
   let MAX_GRAPH_POINTS = 12;
   let ctr = 0;
+  
+   
+  function initial_gauge_chart(){
+    try {
+      Plotly.newPlot(temperatureGaugeDiv, temperatureData, layout);
+      Plotly.newPlot(humidityGaugeDiv, humidityData, layout);
+      Plotly.newPlot(pressureGaugeDiv, pressureData, layout);
+      Plotly.newPlot(altitudeGaugeDiv, altitudeData, layout);  
+      console.log("HAKUNA SHIDA: "+ temperatureGaugeDiv+ ','+temperatureData+', '+layout);
+    } catch (error) {
+      console.log("TATIZO: "+error);
+    }      
+  }
 
-  // Callback function that will retrieve our latest sensor readings and redraw our Gauge with the latest readings
-  try {
-    initial_loading()
-    backendData.message.map((message,i)=> {
-      // ["id", "temperature", "humidity", "rain", "soil_moisture", "created_at"].map(property => message[property])[0]
-      weather = ["id", "temperature", "humidity", "rain", "soil_moisture", "created_at"].map(property => message[property]);
-      // console.log(weather);
-      updateSensorReadings(message)
-    });    
-  } catch (error) {
+  // Event listener when page is loaded
+  function initial_loading() {
+    // window.addEventListener("load", (event) => {
+      Plotly.newPlot(temperatureHistoryDiv,[temperatureTrace],temperatureLayout,config);
+      Plotly.newPlot(humidityHistoryDiv, [humidityTrace], humidityLayout, config);
+      Plotly.newPlot(pressureHistoryDiv, [pressureTrace], pressureLayout, config);
+      Plotly.newPlot(altitudeHistoryDiv, [altitudeTrace], altitudeLayout, config);
+     
+      Plotly.newPlot(temperatureGaugeDiv, temperatureData, layout);
+      Plotly.newPlot(humidityGaugeDiv, humidityData, layout);
+      Plotly.newPlot(pressureGaugeDiv, pressureData, layout);
+      Plotly.newPlot(altitudeGaugeDiv, altitudeData, layout); 
+      console.log("HAKUNA SHIDA: "+ temperatureGaugeDiv+ ','+temperatureData+', '+layout);
+
+      // // Run it initially
+      handleDeviceChange(mediaQuery);
+    // });
     
+    
+    // Get MQTT Connection
+      fetchMQTTConnection();
+
+      //initialize gauge charts
+      initial_gauge_chart();
   }
 
   function updateSensorReadings(jsonResponse) {
@@ -463,6 +462,7 @@ function App() {
       newAltitudeYArray,
       altitude,'alt'
     );
+    initial_gauge_chart();
   }
 
   function updateBoxes(temperature, humidity, pressure, altitude) {
@@ -555,6 +555,20 @@ function App() {
     };
     gaugeCharts.forEach((chart) => Plotly.relayout(chart, gaugeHistory));
   }
+
+  // Callback function that will retrieve our latest sensor readings and redraw our Gauge with the latest readings
+  try {
+    initial_loading()
+    backendData.message.map((message,i)=> {
+      // ["id", "temperature", "humidity", "rain", "soil_moisture", "created_at"].map(property => message[property])[0]
+      weather = ["id", "temperature", "humidity", "rain", "soil_moisture", "created_at"].map(property => message[property]);
+      // console.log(weather);
+      updateSensorReadings(message)
+    });    
+  } catch (error) {
+    
+  }
+
   
   /*
     MQTT Message Handling Code
@@ -605,9 +619,11 @@ function App() {
       mqttStatus = document.querySelector(".status");
     }
     // ***********
-    fetch(`${server}/dashboard/fetch_current_weather`)
+    // fetch(`${server}/dashboard/fetch_current_weather`)
+    axios.get(`${server}/dashboard/fetch_current_weather`)
     .then(
-      response => response.json(),
+      // response => response.json(),
+      response => response.data
     // console.log(response)
     ).then(
       response => {  
@@ -632,14 +648,16 @@ function App() {
   }
 
   function fetchMQTTConnection() {
-    fetch(`${server}/mqttConnDetails`, {
-      method: "GET",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
+    // fetch(`${server}/mqttConnDetails`, {
+    axios.get(`${server}/mqttConnDetails`, {
+      // method: "GET",
+      // headers: {
+      //   "Content-type": "application/json; charset=UTF-8",
+      // },
     })
       .then(function (response) {
-        return response.json();
+        // return response.json();
+        return response => response.data;
       })
       .then(function (data) {
         console.log(`F E T C H !`+data.mqttServer+', '+data.mqttTopic);
